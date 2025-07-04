@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cocktail Flashcards - Bar Training</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#3F51B5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Cocktail Flashcards">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Icons -->
+    <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #3F51B5, #5C6BC0);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #3F51B5;
+        }
+
+        .form-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #3F51B5;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3F51B5;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn {
+            background: #3F51B5;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background: #303F9F;
+        }
+
+        .btn-secondary {
+            background: #757575;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #616161;
+        }
+
+        .cocktail-grid {
+            display: grid;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .cocktail-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .cocktail-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        .cocktail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .cocktail-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #3F51B5;
+        }
+
+        .cocktail-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .icon-btn.edit {
+            color: #2196F3;
+        }
+
+        .icon-btn.delete {
+            color: #f44336;
+        }
+
+        .recipe-content {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border-left: 4px solid #3F51B5;
+        }
+
+        .recipe-text {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #555;
+        }
+
+        .reveal-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .reveal-btn:hover {
+            background: #45a049;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .install-banner {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: none;
+        }
+
+        .install-banner.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🍸 Cocktail Flashcards</h1>
+        <p>Hotel Bar Training Tool</p>
+    </div>
+
+    <div class="install-banner" id="installBanner">
+        <strong>📱 Install this app on your device for easy access!</strong>
+        <p>Tap to add to home screen</p>
+    </div>
+
+    <div class="container">
+        <div class="search-container">
+            <input 
+                type="text" 
+                class="search-input" 
+                id="searchInput"
+                placeholder="🔍 Search cocktails..."
+            >
+        </div>
+
+        <div class="cocktail-grid" id="cocktailGrid">
+            <!-- Cocktails will be populated here -->
+        </div>
+
+        <div class="form-section">
+            <h2 class="form-title" id="formTitle">Add New Cocktail</h2>
+            <form id="cocktailForm">
+                <div class="form-group">
+                    <label class="form-label" for="nameInput">Cocktail Name</label>
+                    <input 
+                        type="text" 
+                        class="form-input" 
+                        id="nameInput"
+                        required
+                        maxlength="100"
+                    >
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="recipeInput">Recipe</label>
+                    <textarea 
+                        class="form-input form-textarea" 
+                        id="recipeInput"
+                        required
+                        maxlength="1000"
+                        placeholder="Enter the recipe in your own words..."
+                    ></textarea>
+                </div>
+                <button type="submit" class="btn" id="submitBtn">Add Cocktail</button>
+                <button type="button" class="btn btn-secondary" id="cancelBtn" style="display: none;">Cancel Edit</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        class CocktailApp {
+            constructor() {
+                this.cocktails = [];
+                this.editingId = null;
+                this.searchTerm = '';
+                this.loadCocktails();
+                this.initializeEventListeners();
+                this.initializePWA();
+                this.addInitialCocktails();
+            }
+
+            initializeEventListeners() {
+                document.getElementById('searchInput').addEventListener('input', (e) => {
+                    this.searchTerm = e.target.value.toLowerCase();
+                    this.renderCocktails();
+                });
+
+                document.getElementById('cocktailForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.saveCocktail();
+                });
+
+                document.getElementById('cancelBtn').addEventListener('click', () => {
+                    this.cancelEdit();
+                });
+
+                document.getElementById('installBanner').addEventListener('click', () => {
+                    this.promptInstall();
+                });
+            }
+
+            initializePWA() {
+                // Register service worker
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.register('service_worker.js')
+                        .then(registration => console.log('SW registered'))
+                        .catch(error => console.log('SW registration failed'));
+                }
+
+                // Handle install prompt
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    e.preventDefault();
+                    this.deferredPrompt = e;
+                    document.getElementById('installBanner').classList.add('show');
+                });
+            }
+
+            promptInstall() {
+                if (this.deferredPrompt) {
+                    this.deferredPrompt.prompt();
+                    this.deferredPrompt.userChoice.then((choiceResult) => {
+                        if (choiceResult.outcome === 'accepted') {
+                            document.getElementById('installBanner').style.display = 'none';
+                        }
+                        this.deferredPrompt = null;
+                    });
+                }
+            }
+
+            loadCocktails() {
+                const stored = localStorage.getItem('cocktails');
+                if (stored) {
+                    this.cocktails = JSON.parse(stored);
+                }
+            }
+
+            saveCocktailsToStorage() {
+                localStorage.setItem('cocktails', JSON.stringify(this.cocktails));
+            }
+
+            addInitialCocktails() {
+                if (this.cocktails.length === 0) {
+                    const initialCocktails = [
+                        {
+                            id: Date.now(),
+                            name: "Old Fashioned",
+                            recipe: "Muddle sugar cube with 2-3 dashes of bitters in rocks glass. Add 2 oz bourbon whiskey. Stir with ice. Garnish with orange peel."
+                        },
+                        {
+                            id: Date.now() + 1,
+                            name: "Daiquiri",
+                            recipe: "Combine 2 oz white rum, 1 oz fresh lime juice, and 0.5 oz simple syrup. Shake with ice and strain into chilled coupe glass."
+                        },
+                        {
+                            id: Date.now() + 2,
+                            name: "Moscow Mule",
+                            recipe: "Combine 2 oz vodka and 0.5 oz lime juice in copper mug. Top with ginger beer. Garnish with lime wheel."
+                        }
+                    ];
+                    
+                    this.cocktails = initialCocktails;
+                    this.saveCocktailsToStorage();
+                    this.renderCocktails();
+                }
+            }
+
+            saveCocktail() {
+                const name = document.getElementById('nameInput').value.trim();
+                const recipe = document.getElementById('recipeInput').value.trim();
+
+                if (!name || !recipe) {
+                    alert('Please fill in both name and recipe.');
+                    return;
+                }
+
+                if (this.editingId) {
+                    // Update existing cocktail
+                    const index = this.cocktails.findIndex(c => c.id === this.editingId);
+                    if (index !== -1) {
+                        this.cocktails[index] = {
+                            id: this.editingId,
+                            name: name,
+                            recipe: recipe
+                        };
+                    }
+                } else {
+                    // Add new cocktail
+                    const newCocktail = {
+                        id: Date.now(),
+                        name: name,
+                        recipe: recipe
+                    };
+                    this.cocktails.push(newCocktail);
+                }
+
+                this.saveCocktailsToStorage();
+                this.renderCocktails();
+                this.resetForm();
+            }
+
+            editCocktail(id) {
+                const cocktail = this.cocktails.find(c => c.id === id);
+                if (cocktail) {
+                    this.editingId = id;
+                    document.getElementById('nameInput').value = cocktail.name;
+                    document.getElementById('recipeInput').value = cocktail.recipe;
+                    document.getElementById('formTitle').textContent = 'Edit Cocktail';
+                    document.getElementById('submitBtn').textContent = 'Save Changes';
+                    document.getElementById('cancelBtn').style.display = 'block';
+                    
+                    // Scroll to form
+                    document.getElementById('cocktailForm').scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+
+            deleteCocktail(id) {
+                if (confirm('Are you sure you want to delete this cocktail?')) {
+                    this.cocktails = this.cocktails.filter(c => c.id !== id);
+                    this.saveCocktailsToStorage();
+                    this.renderCocktails();
+                    
+                    // If we're editing the deleted cocktail, reset the form
+                    if (this.editingId === id) {
+                        this.resetForm();
+                    }
+                }
+            }
+
+            cancelEdit() {
+                this.resetForm();
+            }
+
+            resetForm() {
+                this.editingId = null;
+                document.getElementById('nameInput').value = '';
+                document.getElementById('recipeInput').value = '';
+                document.getElementById('formTitle').textContent = 'Add New Cocktail';
+                document.getElementById('submitBtn').textContent = 'Add Cocktail';
+                document.getElementById('cancelBtn').style.display = 'none';
+            }
+
+            renderCocktails() {
+                const grid = document.getElementById('cocktailGrid');
+                const filteredCocktails = this.cocktails.filter(cocktail =>
+                    cocktail.name.toLowerCase().includes(this.searchTerm) ||
+                    cocktail.recipe.toLowerCase().includes(this.searchTerm)
+                );
+
+                if (filteredCocktails.length === 0) {
+                    grid.innerHTML = `
+                        <div class="empty-state">
+                            <h3>No cocktails found</h3>
+                            <p>${this.searchTerm ? 'Try a different search term' : 'Add your first cocktail below!'}</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = filteredCocktails.map(cocktail => `
+                    <div class="cocktail-card">
+                        <div class="cocktail-header">
+                            <h3 class="cocktail-name">${cocktail.name}</h3>
+                            <div class="cocktail-actions">
+                                <button class="icon-btn edit" onclick="app.editCocktail(${cocktail.id})" title="Edit">
+                                    ✏️
+                                </button>
+                                <button class="icon-btn delete" onclick="app.deleteCocktail(${cocktail.id})" title="Delete">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+                        <div id="recipe-${cocktail.id}" style="display: none;">
+                            <div class="recipe-content">
+                                <div class="recipe-text">${cocktail.recipe}</div>
+                            </div>
+                        </div>
+                        <button class="reveal-btn" onclick="app.toggleRecipe(${cocktail.id})">
+                            <span id="btn-text-${cocktail.id}">Reveal Recipe</span>
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            toggleRecipe(id) {
+                const recipeDiv = document.getElementById(`recipe-${id}`);
+                const btnText = document.getElementById(`btn-text-${id}`);
+                
+                if (recipeDiv.style.display === 'none') {
+                    recipeDiv.style.display = 'block';
+                    btnText.textContent = 'Hide Recipe';
+                } else {
+                    recipeDiv.style.display = 'none';
+                    btnText.textContent = 'Reveal Recipe';
+                }
+            }
+        }
+
+        // Initialize the app
+        const app = new CocktailApp();
+    </script>
+    <div class="footer">
+        <p>© 2025 Luis Picó - Licensed under AGPLv3</p>
+        <p>Source code available at: <a href="https://github.com/LuisPicoES/cocktail-flashcards-pwa">Github</a>.</p>
+    </div>
+</body>
+</html>
